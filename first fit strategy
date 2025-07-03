@@ -1,0 +1,49 @@
+#include <stdio.h>
+
+#define MAX_BLOCKS 50
+#define MAX_PROCESSES 50
+
+int main() {
+    int numBlocks, numProcesses;
+    int blockSize[MAX_BLOCKS], processSize[MAX_PROCESSES], allocation[MAX_PROCESSES];
+
+    printf("Enter the number of memory blocks: ");
+    scanf("%d", &numBlocks);
+
+    printf("Enter sizes of %d memory blocks:\n", numBlocks);
+    for (int i = 0; i < numBlocks; i++) {
+        scanf("%d", &blockSize[i]);
+    }
+
+    printf("\nEnter the number of processes: ");
+    scanf("%d", &numProcesses);
+
+    printf("Enter sizes of %d processes:\n", numProcesses);
+    for (int i = 0; i < numProcesses; i++) {
+        scanf("%d", &processSize[i]);
+        allocation[i] = -1;  // Initialize as not allocated
+    }
+
+    // First Fit Allocation
+    for (int i = 0; i < numProcesses; i++) {
+        for (int j = 0; j < numBlocks; j++) {
+            if (blockSize[j] >= processSize[i]) {
+                allocation[i] = j;
+                blockSize[j] -= processSize[i];  // Reduce available memory in block
+                break;  // Move to next process
+            }
+        }
+    }
+
+    printf("\nFirst Fit Memory Allocation Result:\n");
+    printf("Process\tSize\tBlock Allocated\n");
+    for (int i = 0; i < numProcesses; i++) {
+        printf("%d\t%d\t", i + 1, processSize[i]);
+        if (allocation[i] != -1)
+            printf("%d\n", allocation[i] + 1);  // +1 for human-friendly numbering
+        else
+            printf("Not Allocated\n");
+    }
+
+    return 0;
+}
