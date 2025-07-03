@@ -1,0 +1,92 @@
+#include <stdio.h>
+#include <string.h>
+
+#define MAX_FILES 100
+#define NAME_SIZE 30
+
+typedef struct {
+    char name[NAME_SIZE];
+} File;
+
+int main() {
+    File directory[MAX_FILES];
+    int fileCount = 0;
+    int choice;
+    char fileName[NAME_SIZE];
+
+    while (1) {
+        printf("\nSingle Level Directory Operations:\n");
+        printf("1. Create File\n");
+        printf("2. List Files\n");
+        printf("3. Search File\n");
+        printf("4. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+        getchar();  // Clear newline left by scanf
+
+        switch (choice) {
+            case 1:
+                if (fileCount >= MAX_FILES) {
+                    printf("Error: Directory full. Cannot create more files.\n");
+                } else {
+                    printf("Enter file name to create: ");
+                    fgets(fileName, NAME_SIZE, stdin);
+                    fileName[strcspn(fileName, "\n")] = '\0';  // Remove newline
+
+                    // Check for duplicate file name
+                    int duplicate = 0;
+                    for (int i = 0; i < fileCount; i++) {
+                        if (strcmp(directory[i].name, fileName) == 0) {
+                            duplicate = 1;
+                            break;
+                        }
+                    }
+
+                    if (duplicate) {
+                        printf("Error: File with name \"%s\" already exists.\n", fileName);
+                    } else {
+                        strcpy(directory[fileCount].name, fileName);
+                        fileCount++;
+                        printf("File \"%s\" created successfully.\n", fileName);
+                    }
+                }
+                break;
+
+            case 2:
+                if (fileCount == 0) {
+                    printf("Directory is empty.\n");
+                } else {
+                    printf("Files in directory:\n");
+                    for (int i = 0; i < fileCount; i++) {
+                        printf("%d. %s\n", i + 1, directory[i].name);
+                    }
+                }
+                break;
+
+            case 3:
+                printf("Enter file name to search: ");
+                fgets(fileName, NAME_SIZE, stdin);
+                fileName[strcspn(fileName, "\n")] = '\0';
+
+                int found = 0;
+                for (int i = 0; i < fileCount; i++) {
+                    if (strcmp(directory[i].name, fileName) == 0) {
+                        found = 1;
+                        printf("File \"%s\" found at position %d.\n", fileName, i + 1);
+                        break;
+                    }
+                }
+                if (!found) {
+                    printf("File \"%s\" not found.\n", fileName);
+                }
+                break;
+
+            case 4:
+                printf("Exiting.\n");
+                return 0;
+
+            default:
+                printf("Invalid choice. Try again.\n");
+        }
+    }
+}
