@@ -1,0 +1,61 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_FILES 50
+#define MAX_BLOCKS 100
+
+int main() {
+    int files, start[MAX_FILES], length[MAX_FILES], blocks[MAX_BLOCKS] = {0};
+
+    printf("Enter the number of files: ");
+    scanf("%d", &files);
+
+    for (int i = 0; i < files; i++) {
+        printf("\nEnter details for file %d:\n", i + 1);
+
+        printf("Enter starting block (0-%d): ", MAX_BLOCKS - 1);
+        scanf("%d", &start[i]);
+
+        printf("Enter length (number of blocks): ");
+        scanf("%d", &length[i]);
+
+        // Check if requested blocks are within disk size
+        if (start[i] < 0 || start[i] + length[i] > MAX_BLOCKS) {
+            printf("Error: File %d allocation out of disk range.\n", i + 1);
+            i--;
+            continue;
+        }
+
+        // Check for overlapping blocks
+        int overlap = 0;
+        for (int j = start[i]; j < start[i] + length[i]; j++) {
+            if (blocks[j]) {
+                overlap = 1;
+                break;
+            }
+        }
+
+        if (overlap) {
+            printf("Error: Blocks already allocated. Try different starting block.\n");
+            i--;
+        } else {
+            // Mark the blocks as allocated
+            for (int j = start[i]; j < start[i] + length[i]; j++) {
+                blocks[j] = 1;
+            }
+            printf("File %d allocated from block %d to %d.\n", i + 1, start[i], start[i] + length[i] - 1);
+        }
+    }
+
+    printf("\nSequential File Allocation Table:\n");
+    printf("File\tStart\tLength\tBlocks\n");
+    for (int i = 0; i < files; i++) {
+        printf("%d\t%d\t%d\t", i + 1, start[i], length[i]);
+        for (int j = start[i]; j < start[i] + length[i]; j++) {
+            printf("%d ", j);
+        }
+        printf("\n");
+    }
+
+    return 0;
+}
