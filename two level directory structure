@@ -1,0 +1,177 @@
+#include <stdio.h>
+#include <string.h>
+
+#define MAX_USERS 10
+#define MAX_FILES 20
+#define NAME_SIZE 30
+
+typedef struct {
+    char fileName[NAME_SIZE];
+} File;
+
+typedef struct {
+    char userName[NAME_SIZE];
+    File files[MAX_FILES];
+    int fileCount;
+} UserDirectory;
+
+int main() {
+    UserDirectory users[MAX_USERS];
+    int userCount = 0;
+    int choice;
+    char name[NAME_SIZE];
+
+    while (1) {
+        printf("\nTwo Level Directory Operations:\n");
+        printf("1. Create User Directory\n");
+        printf("2. Create File in User Directory\n");
+        printf("3. List Files in User Directory\n");
+        printf("4. Search File in User Directory\n");
+        printf("5. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+        getchar(); // clear input buffer
+
+        switch (choice) {
+            case 1:
+                if (userCount >= MAX_USERS) {
+                    printf("Error: Maximum user directories reached.\n");
+                } else {
+                    printf("Enter user name for new directory: ");
+                    fgets(name, NAME_SIZE, stdin);
+                    name[strcspn(name, "\n")] = '\0';
+
+                    // Check if user already exists
+                    int exists = 0;
+                    for (int i = 0; i < userCount; i++) {
+                        if (strcmp(users[i].userName, name) == 0) {
+                            exists = 1;
+                            break;
+                        }
+                    }
+
+                    if (exists) {
+                        printf("Error: User directory \"%s\" already exists.\n", name);
+                    } else {
+                        strcpy(users[userCount].userName, name);
+                        users[userCount].fileCount = 0;
+                        userCount++;
+                        printf("User directory \"%s\" created successfully.\n", name);
+                    }
+                }
+                break;
+
+            case 2:
+                printf("Enter user name: ");
+                fgets(name, NAME_SIZE, stdin);
+                name[strcspn(name, "\n")] = '\0';
+
+                int userIndex = -1;
+                for (int i = 0; i < userCount; i++) {
+                    if (strcmp(users[i].userName, name) == 0) {
+                        userIndex = i;
+                        break;
+                    }
+                }
+
+                if (userIndex == -1) {
+                    printf("Error: User directory \"%s\" not found.\n", name);
+                } else {
+                    if (users[userIndex].fileCount >= MAX_FILES) {
+                        printf("Error: User directory \"%s\" is full.\n", name);
+                    } else {
+                        printf("Enter file name to create: ");
+                        fgets(name, NAME_SIZE, stdin);
+                        name[strcspn(name, "\n")] = '\0';
+
+                        // Check for duplicate file name inside user directory
+                        int duplicate = 0;
+                        for (int j = 0; j < users[userIndex].fileCount; j++) {
+                            if (strcmp(users[userIndex].files[j].fileName, name) == 0) {
+                                duplicate = 1;
+                                break;
+                            }
+                        }
+
+                        if (duplicate) {
+                            printf("Error: File \"%s\" already exists in user directory.\n", name);
+                        } else {
+                            strcpy(users[userIndex].files[users[userIndex].fileCount].fileName, name);
+                            users[userIndex].fileCount++;
+                            printf("File \"%s\" created in user directory successfully.\n", name);
+                        }
+                    }
+                }
+                break;
+
+            case 3:
+                printf("Enter user name to list files: ");
+                fgets(name, NAME_SIZE, stdin);
+                name[strcspn(name, "\n")] = '\0';
+
+                userIndex = -1;
+                for (int i = 0; i < userCount; i++) {
+                    if (strcmp(users[i].userName, name) == 0) {
+                        userIndex = i;
+                        break;
+                    }
+                }
+
+                if (userIndex == -1) {
+                    printf("Error: User directory \"%s\" not found.\n", name);
+                } else {
+                    if (users[userIndex].fileCount == 0) {
+                        printf("User directory \"%s\" is empty.\n", users[userIndex].userName);
+                    } else {
+                        printf("Files in user directory \"%s\":\n", users[userIndex].userName);
+                        for (int j = 0; j < users[userIndex].fileCount; j++) {
+                            printf("%d. %s\n", j + 1, users[userIndex].files[j].fileName);
+                        }
+                    }
+                }
+                break;
+
+            case 4:
+                printf("Enter user name to search in: ");
+                fgets(name, NAME_SIZE, stdin);
+                name[strcspn(name, "\n")] = '\0';
+
+                userIndex = -1;
+                for (int i = 0; i < userCount; i++) {
+                    if (strcmp(users[i].userName, name) == 0) {
+                        userIndex = i;
+                        break;
+                    }
+                }
+
+                if (userIndex == -1) {
+                    printf("Error: User directory \"%s\" not found.\n", name);
+                } else {
+                    printf("Enter file name to search: ");
+                    fgets(name, NAME_SIZE, stdin);
+                    name[strcspn(name, "\n")] = '\0';
+
+                    int found = 0;
+                    for (int j = 0; j < users[userIndex].fileCount; j++) {
+                        if (strcmp(users[userIndex].files[j].fileName, name) == 0) {
+                            found = 1;
+                            printf("File \"%s\" found in user directory \"%s\" at position %d.\n",
+                                   name, users[userIndex].userName, j + 1);
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        printf("File \"%s\" not found in user directory \"%s\".\n", name, users[userIndex].userName);
+                    }
+                }
+                break;
+
+            case 5:
+                printf("Exiting.\n");
+                return 0;
+
+            default:
+                printf("Invalid choice. Try again.\n");
+        }
+    }
+}
