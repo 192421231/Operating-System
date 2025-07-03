@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include <sys/stat.h>
+#include <stdlib.h>
+
+void print_user_permissions(mode_t mode, const char *label, mode_t r, mode_t w, mode_t x) {
+    printf("%s permissions: ", label);
+    printf((mode & r) ? "r" : "-");
+    printf((mode & w) ? "w" : "-");
+    printf((mode & x) ? "x" : "-");
+    printf("\n");
+}
+
+int main(int argc, char *argv[]) {
+    struct stat fileStat;
+
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <filename>\n", argv[0]);
+        exit(EXIT_FAILURE);
+    }
+
+    // Get file stats
+    if (stat(argv[1], &fileStat) < 0) {
+        perror("stat");
+        exit(EXIT_FAILURE);
+    }
+
+    printf("File: %s\n", argv[1]);
+
+    printf("\n--- File Access Permissions ---\n");
+
+    // Owner (user) permissions
+    print_user_permissions(fileStat.st_mode, "Owner (User)", S_IRUSR, S_IWUSR, S_IXUSR);
+
+    // Group permissions
+    print_user_permissions(fileStat.st_mode, "Group", S_IRGRP, S_IWGRP, S_IXGRP);
+
+    // Others permissions
+    print_user_permissions(fileStat.st_mode, "Others", S_IROTH, S_IWOTH, S_IXOTH);
+
+    printf("\n--- Ownership ---\n");
+    printf("Owner UID: %d\n", fileStat.st_uid);
+    printf("Group GID: %d\n", fileStat.st_gid);
+
+    return 0;
+}
