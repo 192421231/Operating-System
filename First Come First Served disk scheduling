@@ -1,0 +1,33 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_REQUESTS 100
+
+int main() {
+    int requests[MAX_REQUESTS], numRequests, head, totalMovement = 0;
+
+    printf("Enter the number of disk requests: ");
+    scanf("%d", &numRequests);
+
+    printf("Enter the disk requests (track numbers): ");
+    for (int i = 0; i < numRequests; i++) {
+        scanf("%d", &requests[i]);
+    }
+
+    printf("Enter the initial head position: ");
+    scanf("%d", &head);
+
+    printf("\nFCFS Disk Scheduling Order:\n");
+    printf("%d", head);
+
+    for (int i = 0; i < numRequests; i++) {
+        int movement = abs(requests[i] - head);
+        totalMovement += movement;
+        head = requests[i];
+        printf(" -> %d", head);
+    }
+
+    printf("\n\nTotal head movement: %d\n", totalMovement);
+
+    return 0;
+}
