@@ -1,0 +1,75 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int main() {
+    int i, j, n, total = 0, disk_size, head, temp, max;
+    int queue[20], temp_queue[20], seek_sequence[20];
+
+    printf("Enter the number of disk requests: ");
+    scanf("%d", &n);
+
+    printf("Enter the disk request sequence: ");
+    for (i = 0; i < n; i++) {
+        scanf("%d", &queue[i]);
+    }
+
+    printf("Enter initial head position: ");
+    scanf("%d", &head);
+
+    printf("Enter total disk size: ");
+    scanf("%d", &disk_size);
+
+    // Add head to queue
+    queue[n] = head;
+    n++;
+
+    // Sort the queue
+    for (i = 0; i < n; i++) {
+        for (j = i+1; j < n; j++) {
+            if (queue[i] > queue[j]) {
+                temp = queue[i];
+                queue[i] = queue[j];
+                queue[j] = temp;
+            }
+        }
+    }
+
+    // Find head position in sorted queue
+    int index;
+    for (i = 0; i < n; i++) {
+        if (queue[i] == head) {
+            index = i;
+            break;
+        }
+    }
+
+    printf("\nSeek Sequence is:\n");
+
+    // Move towards the higher end
+    for (i = index; i < n; i++) {
+        printf("%d -> ", queue[i]);
+    }
+
+    // Move to end (disk_size - 1)
+    printf("%d -> ", disk_size - 1);
+
+    // Jump to beginning (0)
+    printf("0 -> ");
+
+    // Move from beginning to head’s left
+    for (i = 0; i < index; i++) {
+        printf("%d", queue[i]);
+        if (i != index - 1)
+            printf(" -> ");
+    }
+    printf("\n");
+
+    // Calculate total seek operations
+    total += (disk_size - 1 - head);  // From head to end
+    total += (disk_size - 1);         // Jump back to 0
+    total += queue[index - 1];        // From 0 to left requests
+
+    printf("\nTotal Seek Operations: %d\n", total);
+
+    return 0;
+}
