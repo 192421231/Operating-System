@@ -1,0 +1,55 @@
+#include <stdio.h>
+
+int main() {
+    int n, indexBlock, i, j, k, nBlocks, block;
+    int blocks[50] = {0};
+
+    printf("Enter the total number of blocks in the disk: ");
+    scanf("%d", &n);
+
+    int files;
+    printf("Enter the number of files: ");
+    scanf("%d", &files);
+
+    for (i = 0; i < files; i++) {
+        printf("\nEnter the index block for file %d: ", i + 1);
+        scanf("%d", &indexBlock);
+
+        if (blocks[indexBlock] == 0) {
+            blocks[indexBlock] = 1;
+
+            printf("Enter the number of blocks needed for file %d: ", i + 1);
+            scanf("%d", &nBlocks);
+
+            printf("Enter the block numbers for file %d: ", i + 1);
+            for (j = 0; j < nBlocks; j++) {
+                scanf("%d", &block);
+                if (blocks[block] == 0) {
+                    blocks[block] = 1;
+                } else {
+                    printf("Block %d is already allocated!\n", block);
+                    j--;  // repeat input
+                }
+            }
+
+            printf("\nFile %d indexed block %d allocated with blocks: ", i + 1, indexBlock);
+            for (j = 0; j < n; j++) {
+                if (blocks[j] == 1 && j != indexBlock) {
+                    printf("%d ", j);
+                }
+            }
+            printf("\n");
+        } else {
+            printf("Index block %d is already allocated! Try another.\n", indexBlock);
+            i--;  // repeat for same file
+        }
+    }
+
+    printf("\nFile Allocation Table:\n");
+    printf("Block No\tStatus\n");
+    for (i = 0; i < n; i++) {
+        printf("%d\t\t%s\n", i, blocks[i] ? "Allocated" : "Free");
+    }
+
+    return 0;
+}
