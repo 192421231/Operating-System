@@ -1,0 +1,86 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct Student {
+    int id;
+    char name[20];
+    float marks;
+};
+
+int main() {
+    FILE *fp;
+    struct Student s;
+    int n, pos;
+
+    // Open file in binary write mode
+    fp = fopen("students.dat", "wb");
+    if (fp == NULL) {
+        printf("Cannot open file.\n");
+        exit(1);
+    }
+
+    printf("Enter number of students: ");
+    scanf("%d", &n);
+
+    // Write student records
+    for (int i = 0; i < n; i++) {
+        printf("Enter student ID: ");
+        scanf("%d", &s.id);
+        printf("Enter student Name: ");
+        scanf("%s", s.name);
+        printf("Enter Marks: ");
+        scanf("%f", &s.marks);
+
+        fwrite(&s, sizeof(s), 1, fp);
+    }
+
+    fclose(fp);
+
+    // Open file in read/update binary mode
+    fp = fopen("students.dat", "rb+");
+    if (fp == NULL) {
+        printf("Cannot open file.\n");
+        exit(1);
+    }
+
+    printf("\nEnter record number to update (1 to %d): ", n);
+    scanf("%d", &pos);
+
+    // Move file pointer to the record position
+    fseek(fp, (pos - 1) * sizeof(s), SEEK_SET);
+
+    // Read the record
+    fread(&s, sizeof(s), 1, fp);
+    printf("Current Data: ID=%d Name=%s Marks=%.2f\n", s.id, s.name, s.marks);
+
+    // Modify record
+    printf("Enter new marks: ");
+    scanf("%f", &s.marks);
+
+    // Move pointer back to the same record position
+    fseek(fp, (pos - 1) * sizeof(s), SEEK_SET);
+
+    // Write the updated record
+    fwrite(&s, sizeof(s), 1, fp);
+
+    fclose(fp);
+
+    printf("\nRecord updated successfully!\n");
+
+    // Display all records
+    fp = fopen("students.dat", "rb");
+    if (fp == NULL) {
+        printf("Cannot open file.\n");
+        exit(1);
+    }
+
+    printf("\nAll Records:\n");
+    while (fread(&s, sizeof(s), 1, fp)) {
+        printf("ID=%d Name=%s Marks=%.2f\n", s.id, s.name, s.marks);
+    }
+
+    fclose(fp);
+
+    return 0;
+}
