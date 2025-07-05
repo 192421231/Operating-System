@@ -1,0 +1,41 @@
+#include <stdio.h>
+
+struct Block {
+    int blockNumber;
+    struct Block* next;
+};
+
+int main() {
+    int nBlocks, i, blockNum;
+    struct Block *head = NULL, *temp = NULL, *newBlock = NULL;
+
+    printf("Enter the number of blocks needed for the file: ");
+    scanf("%d", &nBlocks);
+
+    for (i = 0; i < nBlocks; i++) {
+        printf("Enter block number %d: ", i + 1);
+        scanf("%d", &blockNum);
+
+        newBlock = (struct Block*) malloc(sizeof(struct Block));
+        newBlock->blockNumber = blockNum;
+        newBlock->next = NULL;
+
+        if (head == NULL) {
+            head = newBlock;
+            temp = newBlock;
+        } else {
+            temp->next = newBlock;
+            temp = temp->next;
+        }
+    }
+
+    printf("\nBlocks allocated using Linked File Allocation:\n");
+    temp = head;
+    while (temp != NULL) {
+        printf("%d -> ", temp->blockNumber);
+        temp = temp->next;
+    }
+    printf("NULL\n");
+
+    return 0;
+}
